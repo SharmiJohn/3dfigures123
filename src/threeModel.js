@@ -46,7 +46,7 @@ function ThreeModel({ members, nodes }) {
       </lineSegments>
     );
   };
-console.log(lines);
+
   return (
     <>
       {/* Render lines */}
@@ -71,7 +71,7 @@ console.log(lines);
       {createDottedAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 15, 0), "green")}
       {createDottedAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 15), "blue")}
 
-      {/* Labels for the axes */}
+      {/* Labels for the Axes */}
       <Text position={[11, 0, 0]} color="red" fontSize={3} anchorX="center" anchorY="right">
         X 
       </Text>
