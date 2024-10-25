@@ -1,5 +1,7 @@
-import  { useEffect, useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
+import axios from 'axios';
 
 function ExcelDataReader({ onDataLoaded }) {
   const [members, setMembers] = useState([]);
@@ -7,31 +9,35 @@ function ExcelDataReader({ onDataLoaded }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('/data/sample.xlsx');
-      const arrayBuffer = await response.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      try {
+        const response = await axios.get('/data/sample.xlsx', {
+          responseType: 'arraybuffer',
+        });
 
-      // Processing the first sheet (Members)
-      const memberSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const memberData = XLSX.utils.sheet_to_json(memberSheet, { header: 1 });
+        const workbook = XLSX.read(new Uint8Array(response.data), { type: 'array' });
 
-      const memberArray = memberData.slice(1).map((row) => ({
-        start: row[1],
-        end: row[2],
-      }));
-      setMembers(memberArray);
+        // Process Members sheet
+        const memberSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const memberData = XLSX.utils.sheet_to_json(memberSheet, { header: 1 });
+        const memberArray = memberData.slice(1).map((row) => ({
+          start: row[1],
+          end: row[2],
+        }));
+        setMembers(memberArray);
 
-      // Processing the second sheet (Nodes)
-      const nodeSheet = workbook.Sheets[workbook.SheetNames[1]];
-      const nodeData = XLSX.utils.sheet_to_json(nodeSheet, { header: 1 });
-
-      const nodeObject = {};
-      nodeData.slice(1).forEach((row) => {
-        const nodeNumber = row[0];
-        const coordinates = [row[1], row[2], row[3]];
-        nodeObject[nodeNumber] = coordinates;
-      });
-      setNodes(nodeObject);
+        // Process Nodes sheet
+        const nodeSheet = workbook.Sheets[workbook.SheetNames[1]];
+        const nodeData = XLSX.utils.sheet_to_json(nodeSheet, { header: 1 });
+        const nodeObject = {};
+        nodeData.slice(1).forEach((row) => {
+          const nodeNumber = row[0];
+          const coordinates = [row[1], row[2], row[3]];
+          nodeObject[nodeNumber] = coordinates;
+        });
+        setNodes(nodeObject);
+      } catch (error) {
+        console.error('Error fetching or processing the Excel file:', error);
+      }
     };
 
     fetchData();
@@ -43,7 +49,7 @@ function ExcelDataReader({ onDataLoaded }) {
     }
   }, [members, nodes, onDataLoaded]);
 
-  return null; // This component does not render anything
+  return null;
 }
 
 export default ExcelDataReader;

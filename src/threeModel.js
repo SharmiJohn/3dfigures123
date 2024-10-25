@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
@@ -6,28 +7,32 @@ function ThreeModel({ members, nodes }) {
   const [lines, setLines] = useState([]);
 
   useEffect(() => {
-    const newLines = members.map((member,index) => {
+    const newLines = [];
+    
+    for (let index = 0; index < members.length; index++) {
+      const member = members[index];
       const startNode = nodes[member.start];
       const endNode = nodes[member.end];
-
+  
       if (startNode && endNode) {
         const points = [
           new THREE.Vector3(...startNode),
           new THREE.Vector3(...endNode),
         ];
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        return (
+  
+        newLines.push(
           <line key={index}>
             <primitive object={geometry} attach="geometry" />
             <lineBasicMaterial attach="material" color="black" />
           </line>
         );
       }
-      return null;
-    });
-
+    }
+  
     setLines(newLines);
   }, [members, nodes]);
+  
 
   const createDottedAxisLine = (start, end, color) => {
     const points = [start, end];
@@ -36,6 +41,7 @@ function ThreeModel({ members, nodes }) {
     return (
       <lineSegments geometry={geometry}>
         <lineDashedMaterial
+          attach="material"
           color={color}
           dashSize={0.5}
           gapSize={0.2}
@@ -47,10 +53,7 @@ function ThreeModel({ members, nodes }) {
 
   return (
     <>
-      {/* Render lines */}
       {lines}
-
-      {/* Render box geometries for X, Y, Z axes */}
       <mesh position={[5, 0, 0]}>
         <boxGeometry args={[2, 2, 2]} />
         <meshStandardMaterial color="red" />
@@ -64,20 +67,18 @@ function ThreeModel({ members, nodes }) {
         <meshStandardMaterial color="blue" />
       </mesh>
 
-      {/* Dotted lines for X, Y, Z axes */}
       {createDottedAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 0), "red")}
       {createDottedAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 15, 0), "green")}
       {createDottedAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 15), "blue")}
 
-      {/* Labels for the Axes */}
       <Text position={[11, 0, 0]} color="red" fontSize={3} anchorX="center" anchorY="right">
-        X 
+        X
       </Text>
       <Text position={[0, 11, 0]} color="green" fontSize={3} anchorX="left" anchorY="bottom">
-        Y 
+        Y
       </Text>
       <Text position={[0, 0, 11]} color="blue" fontSize={3} anchorX="right" anchorY="top">
-        Z 
+        Z
       </Text>
     </>
   );

@@ -1,10 +1,10 @@
-import  { useState } from 'react';
+
+import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import ExcelDataReader from './ExcelDataReader';
 import ThreeModel from './threeModel';
 import { OrbitControls } from '@react-three/drei';
-
-import "./App.css"
+import "./App.css";
 
 function App() {
   const [members, setMembers] = useState([]);
@@ -14,8 +14,6 @@ function App() {
     setMembers(data.members);
     setNodes(data.nodes);
   };
-  console.log(members);
-  console.log(nodes);
 
   return (
     <div className="canvasContainer">
