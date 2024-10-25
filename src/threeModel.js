@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
 
@@ -7,7 +6,7 @@ function ThreeModel({ members, nodes }) {
   const [lines, setLines] = useState([]);
 
   useEffect(() => {
-    const newLines = members.map((member) => {
+    const newLines = members.map((member,index) => {
       const startNode = nodes[member.start];
       const endNode = nodes[member.end];
 
@@ -18,7 +17,7 @@ function ThreeModel({ members, nodes }) {
         ];
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         return (
-          <line key={`${member.start}-${member.end}`}>
+          <line key={index}>
             <primitive object={geometry} attach="geometry" />
             <lineBasicMaterial attach="material" color="black" />
           </line>
@@ -30,7 +29,6 @@ function ThreeModel({ members, nodes }) {
     setLines(newLines);
   }, [members, nodes]);
 
-  // Function to create a dotted axis line using LineSegments
   const createDottedAxisLine = (start, end, color) => {
     const points = [start, end];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -39,8 +37,8 @@ function ThreeModel({ members, nodes }) {
       <lineSegments geometry={geometry}>
         <lineDashedMaterial
           color={color}
-          dashSize={0.5} // Length of the dash
-          gapSize={0.2} // Length of the gap
+          dashSize={0.5}
+          gapSize={0.2}
           linewidth={1}
         />
       </lineSegments>
@@ -62,7 +60,7 @@ function ThreeModel({ members, nodes }) {
         <meshStandardMaterial color="green" />
       </mesh>
       <mesh position={[0, 0, 5]}>
-        <boxGeometry args={[2,2,2]} />
+        <boxGeometry args={[2, 2, 2]} />
         <meshStandardMaterial color="blue" />
       </mesh>
 
