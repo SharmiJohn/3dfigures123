@@ -46,7 +46,7 @@ function ThreeModel({ members, nodes }) {
       </lineSegments>
     );
   };
-
+console.log(lines);
   return (
     <>
       {/* Render lines */}
